@@ -1,4 +1,4 @@
-# Criacao de imagens interativas 1:
+# Criacao de imagens interativas:
 
 ##  cria e inicia um novo contêiner Docker a partir da imagem Alpine versão 3.10, com um shell interativo.
 Depois de entrar no contêiner, o comando "apk update && apk add iputils" é usado para atualizar os repositórios de pacotes do Alpine e, em seguida, instalar o pacote "iputils", que contém o utilitário "ping".
