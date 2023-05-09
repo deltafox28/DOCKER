@@ -1,4 +1,4 @@
-# Compartilhando de dados entre contêineres 
+# Compartilhando de dados entre contêineres:
 
 ## O comando "docker container run" é usado para criar e executar um novo contêiner Docker a partir da imagem "alpine". O contêiner é iniciado em modo iterativo e conectado ao terminal local usando a opção "-it". Ele é nomeado como "writer" usando a opção "--name".
 A opção "-v shared-data:/data" monta o volume "shared-data" no diretório "/data" dentro do contêiner.
@@ -74,7 +74,9 @@ vim index.html
 <p>Isso é um teste!</p>
 ```
 
-## 
+## estão removendo o contêiner "my-site" caso ele exista ("-f" força a remoção) e, em seguida, construindo uma nova imagem Docker chamada "my-website:1.0" a partir do Dockerfile no diretório atual e, finalmente, criando um novo contêiner Docker usando a imagem "my-website:1.0". O contêiner é iniciado em segundo plano ("-d") e recebe o nome "my-site" ("--name my-site"). A porta 8080 do host é mapeada para a porta 80 do contêiner ("-p 8080:80").
+Assumindo que o Dockerfile não foi alterado e que o conteúdo do diretório atual não mudou, a imagem "my-website:1.0" não precisa ser construída novamente, então você pode pular a etapa de construção da imagem e simplesmente executar o comando para iniciar o contêiner.
+Isso inicia o contêiner "my-site" usando a imagem "my-website:1.0". O contêiner é iniciado em segundo plano ("-d") e recebe o nome "my-site" ("--name my-site"). A porta 8080 do host é mapeada para a porta 80 do contêiner ("-p 8080:80").
 ```sh
 # docker container rm -f my-site
 # docker image build -t my-website:1.0 .
@@ -84,42 +86,31 @@ vim index.html
 my-website:1.0
 ```
 
-## 
+## Esses comandos estão removendo o contêiner "my-site" caso ele exista ("-f" força a remoção) e, em seguida, criando um novo contêiner Docker usando a imagem "my-website:1.0". O contêiner é iniciado em segundo plano ("-d") e recebe o nome "my-site" ("--name my-site"). A porta 8080 do host é mapeada para a porta 80 do contêiner ("-p 8080:80").
+Além disso, um volume Docker é criado para mapear o diretório atual para o diretório "/usr/share/nginx/html" dentro do contêiner ("-v $(pwd):/usr/share/nginx/html"). Isso significa que qualquer alteração feita no diretório atual será refletida automaticamente dentro do contêiner.
 ```sh
-
+$ docker container rm -f my-site
+$ docker container run -d \
+--name my-site \
+-v $(pwd):/usr/share/nginx/html \
+-p 8080:80 \
+my-website:1.0
 ```
 
-## 
-```sh
+# Definindo volumes em imagens:
 
+## O primeiro comando "docker image pull mongo" baixa a imagem Docker oficial do MongoDB para o sistema local, se já não estiver presente.
+O segundo comando "docker image inspect" é usado para exibir informações sobre a imagem Docker, como suas camadas, metadados, configurações e outras propriedades. O parâmetro "--format" especifica o formato de saída do comando, que neste caso é um objeto JSON com as informações sobre os volumes configurados na imagem.
+O comando "jq ." é usado para formatar a saída JSON de forma mais legível.
+O terceiro comando "docker run" inicia um novo contêiner Docker com o nome "my-mongo" usando a imagem "mongo". O parâmetro "-d" inicia o contêiner em segundo plano.
+O quarto comando "docker inspect" é usado para exibir informações sobre o contêiner Docker, como sua configuração, estado e outras propriedades. O parâmetro "--format" especifica o formato de saída do comando, que neste caso é um objeto JSON com as informações sobre os volumes montados no contêiner.
+O comando "jq ." é usado novamente para formatar a saída JSON de forma mais legível.
+```sh
+docker image pull mongo
+docker image inspect \
+--format='{{json .ContainerConfig.Volumes}}' \
+mongo | jq .
+docker run --name my-mongo -d mongo
+docker inspect --format '{{json .Mounts}}' my-mongo | jq .
 ```
 
-## 
-```sh
-
-```
-
-## 
-```sh
-
-```
-
-## 
-```sh
-
-```
-
-## 
-```sh
-
-```
-
-## 
-```sh
-
-```
-
-## 
-```sh
-
-```
