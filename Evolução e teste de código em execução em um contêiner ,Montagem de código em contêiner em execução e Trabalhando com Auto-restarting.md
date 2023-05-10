@@ -150,3 +150,58 @@ curl localhost:3300/status
 docker container exec my-sample-app cat index.js
 curl localhost:3300/status
 ```
+
+# Trabalhando com Auto-restarting
+
+## cd /fod/node provavelmente é o caminho onde o código fonte do aplicativo está localizado. O comando npm install -g nodemon instala o nodemon globalmente, para que possa ser usado em qualquer projeto Node.js, e o comando nodemon é usado para iniciar o servidor Node.js com o nodemon.
+```sh
+cd /fod/node
+npm install -g nodemon
+nodemon
+```
+
+## O código adiciona uma rota HTTP GET /colors ao aplicativo, que envia uma matriz de cores como resposta para qualquer solicitação GET recebida nessa rota. Quando o aplicativo é iniciado e um cliente faz uma solicitação GET para /colors, o servidor responde com a matriz ['red', 'green', 'blue'].
+```sh
+vim index.js
+...
+
+app.get('/colors', (req,res)=>{
+	res.send(['red','green','blue']);
+})
+```
+
+
+## FROM node:latest: especifica que a imagem base para a imagem do contêiner é a imagem mais recente do Node.js.
+RUN npm install -g nodemon: instala o nodemon globalmente no contêiner Docker.
+WORKDIR /app: define o diretório de trabalho padrão para /app.
+COPY package.json ./: copia o arquivo package.json do diretório atual para o diretório /app do contêiner Docker.
+RUN npm install: instala as dependências do projeto, listadas no arquivo package.json.
+COPY . .: copia todo o conteúdo do diretório atual para o diretório /app do contêiner Docker.
+CMD nodemon: define o comando padrão que será executado quando o contêiner for iniciado, neste caso, nodemon será executado para iniciar o servidor Node.js.
+Com este Dockerfile, quando a imagem Docker é criada e o contêiner é executado, ele instala as dependências do projeto Node.js e inicia o servidor Node.js com o nodemon.
+```sh
+vim Dockerfile-dev
+
+FROM node:latest
+RUN npm install -g nodemon
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+COPY . .
+CMD nodemon
+```
+
+## docker image build --file Dockerfile-dev -t sample-app-dev .: cria uma imagem Docker a partir do arquivo Dockerfile Dockerfile-dev no diretório atual (.), e a imagem é chamada de sample-app-dev.
+docker container run --rm -it -v $(pwd):/app -p 3300:3300 sample-app-dev: executa um contêiner a partir da imagem sample-app-dev criada no passo anterior.
+--rm indica que o contêiner deve ser excluído quando for encerrado.
+-it permite a interação com o terminal do contêiner.
+-v $(pwd):/app mapeia o diretório atual ($(pwd)) para o diretório /app do contêiner. Isso permite que as alterações feitas no código fonte do aplicativo sejam refletidas no contêiner em tempo real.
+-p 3300:3300 mapeia a porta 3300 do contêiner para a porta 3300 do host local. Isso permite que o aplicativo Node.js seja acessado no host local pelo navegador da web.
+sample-app-dev é o nome da imagem Docker que será usada para executar o contêiner.
+```sh
+docker image build --file Dockerfile-dev -t sample-app-dev .
+docker container run --rm -it \
+-v $(pwd):/app \
+-p 3300:3300 \
+sample-app-dev
+```
