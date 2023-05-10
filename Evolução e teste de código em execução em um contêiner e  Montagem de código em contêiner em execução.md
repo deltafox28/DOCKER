@@ -1,7 +1,6 @@
 # Evolução e teste de código em execução em um contêiner:
 
-## O comando "mkdir -p ~/fod/node && cd ~/fod/node" cria um diretório chamado "node" dentro da pasta "fod" no diretório principal do usuário atual e depois entra nesse diretório.
-O comando "npm init" inicializa um novo projeto Node.js no diretório atual e cria um arquivo "package.json" com informações sobre o projeto, como nome, versão, descrição e dependências.
+## O comando "mkdir -p ~/fod/node && cd ~/fod/node" cria um diretório chamado "node" dentro da pasta "fod" no diretório principal do usuário atual e depois entra nesse diretório. O comando "npm init" inicializa um novo projeto Node.js no diretório atual e cria um arquivo "package.json" com informações sobre o projeto, como nome, versão, descrição e dependências.
 o comando "npm install express --save" instala o framework web "Express" e adiciona a sua dependência ao arquivo "package.json" com a opção "--save". O Express é um framework popular para Node.js usado para criar aplicativos web e APIs.
 ```sh
 mkdir -p ~/fod/node && cd ~/fod/node
