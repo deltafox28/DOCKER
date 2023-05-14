@@ -111,41 +111,59 @@ docker network prune --force
 
 # O host e a rede nula
 
-##
+## O comando docker container run é usado para criar e executar um novo container a partir de uma imagem especificada.
+A opção --rm indica que o container deve ser removido automaticamente após a sua execução.
+A opção -it inicia o container em modo iterativo e alocando um pseudo-TTY (terminal).
+A opção --network host conecta o container à rede host, ou seja, o container compartilhará o mesmo namespace de rede que o host.
+O argumento alpine:latest especifica a imagem que será usada para criar o container.
+O comando /bin/sh inicia um shell dentro do container. Por fim, os comandos ip addr show enp0s3 e ip route exibem informações sobre a configuração de rede do container. O primeiro mostra o endereço IP associado à interface de rede enp0s3 e o segundo mostra a tabela de roteamento do container.
 ```sh
 docker container run --rm -it --network host alpine:latest /bin/sh
 / # ip addr show enp0s3
 / # ip route
 ```
 
-##
+## No comando docker container run utilizado, a opção --network none especifica que o container será executado sem conexão de rede. O argumento alpine:latest especifica a imagem que será usada para criar o container.
+O comando /bin/sh inicia um shell dentro do container.
+Ao executar o comando ip addr show eth0 dentro do container, você estará exibindo as informações de configuração da interface de rede eth0, que neste caso não estará configurada, pois o container não possui conexão de rede.
+Já o comando ip route exibe a tabela de roteamento do container, mas como não há conexão de rede, a tabela estará vazia.
 ```sh
 A rede nula
-
 docker container run --rm -it --network none alpine:latest /bin/sh
 / # ip addr show eth0
 / # ip route
 ```
 
-##
+## O comando docker network create é usado para criar uma nova rede no Docker. Neste caso, a opção --driver bridge indica que a nova rede será do tipo bridge, que é o tipo padrão de rede do Docker.
+O argumento test-net especifica o nome da nova rede a ser criada.
+Ao criar uma nova rede, os containers podem ser conectados a ela usando a opção --network no comando docker container run, por exemplo. Isso permite que os containers se comuniquem entre si dentro da rede, independentemente de suas configurações de rede individuais ou da rede do host.
 ```sh
 docker network create --driver bridge test-net
 ```
 
-##
+## Esse comando executa um container com a imagem nginx:alpine, na rede test-net, com o nome web e em modo de execução destacado (-d).
+O argumento --name web define o nome do container como "web".
+A opção --network test-net conecta o container à rede test-net
+A imagem nginx:alpine é usada para criar o container.
+Ao executar este comando, o Docker irá baixar a imagem do nginx:alpine se ela não estiver presente no host e criará um novo container baseado nessa imagem. O container será conectado à rede test-net e iniciará o servidor nginx em segundo plano. O container será executado em segundo plano devido à opção -d. O nome do container será definido como "web" devido à opção --name.
 ```sh
 docker container run --name web -d \
 --network test-net nginx:alpine
 ```
 
-##
+## Esse comando executa um novo container com a imagem alpine:latest, conectado à rede do container com o nome web usando a opção --network container:web, ou seja, ele compartilha a rede com o container que foi criado anteriormente.
+O comando /bin/sh inicia um shell dentro do container.
+Ao executar o comando wget -qO - localhost dentro do container, você estará fazendo uma solicitação HTTP para o endereço localhost. Como o container está conectado à rede do container web, a solicitação será enviada para o servidor nginx que está sendo executado no container web.
+O parâmetro -qO - do comando wget é usado para não exibir a saída do download e para imprimir a saída diretamente no terminal.
+Ao executar este comando, o conteúdo da página inicial do servidor nginx será exibido no terminal do container.
 ```sh
 docker container run -it --rm --network container:web \
 alpine:latest /bin/sh
 / # wget -qO - localhost
 ```
 
-##
+## O primeiro comando docker container rm --force web remove o container com o nome web de forma forçada. A opção --force faz com que o container seja parado imediatamente, mesmo que esteja em execução, e seja removido em seguida.
+O segundo comando docker network rm test-net remove a rede com o nome test-net do Docker. Essa rede pode ter sido usada para conectar um ou mais containers anteriormente. Se houver algum container ainda conectado a essa rede, o comando falhará e você precisará remover esses containers primeiro.
 ```sh
 docker container rm --force web
 docker network rm test-net
