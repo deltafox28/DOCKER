@@ -88,4 +88,26 @@ docker-compose ps
 curl -4 localhost:32768
 ```
 
+# Criando um Docker Swarm
+
+## O comando docker swarm init é usado para iniciar um cluster do Docker Swarm, que é uma ferramenta de orquestração de contêineres nativa do Docker. Ao executar esse comando em uma máquina, ela se torna o nó de controle principal do cluster e pode gerenciar outros nós.
+```sh
+docker swarm init
+```
+
+## O comando docker swarm join --token <join-token> <IP address>:2377 é usado para adicionar um nó (node) ao cluster do Docker Swarm. O <join-token> é um token de junção que é gerado quando você inicializa o swarm e o <IP address> é o endereço IP do nó de controle (manager) que você deseja se juntar.
+Aqui está como usar o comando docker swarm join:
+No nó que deseja adicionar ao swarm, abra um terminal ou console de comandos.
+Execute o seguinte comando, substituindo <join-token> pelo token de junção apropriado e <IP address> pelo endereço IP do nó de controle que você deseja se juntar:
+```sh
+docker swarm join --token <join-token> <IP address>:2377
+```
+
+## 
+O comando docker node ls é usado para listar todos os nós (nodes) em um cluster do Docker Swarm. Ele fornece informações sobre os nós, como ID, nome, status, disponibilidade, tipo de nó e versão do Docker.
+O comando docker node inspect <node-id> é usado para obter informações detalhadas sobre um nó específico em um cluster do Docker Swarm. Ele fornece informações sobre o nó, incluindo sua configuração, endereços IP, recursos, tarefas em execução e muito mais.
+```sh
+docker node ls
+docker node inspect pxb5lt3k8okl7n730wdkr9qn2
+```
 
